@@ -230,4 +230,8 @@ class AuthHandler with StaticToken {
     await _emitter.emitAsync('refresh', tokens);
     return tokens;
   }
+  
+  AuthResponse fromAuthResponse(Response response) {
+    return AuthResponse.fromResponse(response);
+  }
 }
