@@ -53,9 +53,9 @@ class AuthHandler with StaticToken {
     required DirectusStorage storage,
     required Dio refreshClient,
     String? key,
-  })  : storage = AuthStorage(storage, key: key),
-        forgottenPassword = ForgottenPassword(client: client),
-        _refreshClient = refreshClient {
+  }) : storage = AuthStorage(storage, key: key),
+       forgottenPassword = ForgottenPassword(client: client),
+       _refreshClient = refreshClient {
     // Refresh url is same as normal url.
     _refreshClient.options.baseUrl = client.options.baseUrl;
     // Get new access token if current is expired.
@@ -93,6 +93,24 @@ class AuthHandler with StaticToken {
   bool get isLoggedIn => _tokens != null;
 
   /// Try to login user.
+  Future<void> loginByCustom(Response response) async {
+    await removeAuthState();
+
+    try {
+      final loginDataResponse = AuthResponse.fromResponse(response);
+      await storage.storeLoginData(loginDataResponse);
+
+      tokens = loginDataResponse;
+      currentUser = CurrentUser(client: client);
+      tfa = Tfa(client: client);
+
+      await _emitter.emitAsync('login', loginDataResponse);
+    } catch (e) {
+      throw DirectusError.fromDio(e);
+    }
+  }
+
+  /// Try to login user.
   Future<void> login({
     required String email,
     required String password,
@@ -102,7 +120,7 @@ class AuthHandler with StaticToken {
       'email': email,
       'password': password,
       'mode': 'json',
-      if (otp != null) 'otp': otp
+      if (otp != null) 'otp': otp,
     };
 
     await removeAuthState();
@@ -126,8 +144,10 @@ class AuthHandler with StaticToken {
   Future<void> logout() async {
     if (tokens == null) throw DirectusError(message: 'User is not logged in.');
     try {
-      await client
-          .post('auth/logout', data: {'refresh_token': tokens!.refreshToken});
+      await client.post(
+        'auth/logout',
+        data: {'refresh_token': tokens!.refreshToken},
+      );
     } catch (e) {
       throw DirectusError.fromDio(e);
     } finally {
@@ -208,10 +228,10 @@ class AuthHandler with StaticToken {
     // client.lock();
 
     try {
-      final response = await _refreshClient.post('auth/refresh', data: {
-        'mode': 'json',
-        'refresh_token': tokens!.refreshToken,
-      });
+      final response = await _refreshClient.post(
+        'auth/refresh',
+        data: {'mode': 'json', 'refresh_token': tokens!.refreshToken},
+      );
       final loginDataResponse = AuthResponse.fromResponse(response);
       await storage.storeLoginData(loginDataResponse);
       tokens = loginDataResponse;
@@ -229,9 +249,5 @@ class AuthHandler with StaticToken {
     // client.unlock();
     await _emitter.emitAsync('refresh', tokens);
     return tokens;
-  }
-  
-  AuthResponse fromAuthResponse(Response response) {
-    return AuthResponse.fromResponse(response);
   }
 }
