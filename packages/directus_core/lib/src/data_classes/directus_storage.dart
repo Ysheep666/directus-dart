@@ -5,10 +5,10 @@
 /// write to file, or to use other DB engine, user needs to implement all methods.
 abstract class DirectusStorage {
   /// Call this method to store data.
-  Future<void> setItem(String key, Object value);
+  Future<void> setItem<T>(String key, T value);
 
   /// Call this method to get data from storage.
-  Future<Object?> getItem(String key);
+  Future<T?> getItem<T>(String key, T Function(Map<String, dynamic>) fromJson);
 
   /// Call this method to remove data from storage.
   Future<void> removeItem(String key);

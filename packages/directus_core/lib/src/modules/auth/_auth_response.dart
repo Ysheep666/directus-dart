@@ -62,4 +62,26 @@ class AuthResponse {
       Duration(milliseconds: accessTokenTtlMs),
     );
   }
+
+  /// Convert [AuthResponse] to [Map] object.
+  Map<String, dynamic> toJson() {
+    return {
+      'access_token': accessToken,
+      'expires_at': accessTokenExpiresAt.toIso8601String(),
+      'access_token_ttl_in_ms': accessTokenTtlMs,
+      'refresh_token': refreshToken,
+      'static_token': staticToken,
+    };
+  }
+
+  /// Create [AuthResponse] from [Map] object.
+  factory AuthResponse.fromMap(Map<String, dynamic> map) {
+    return AuthResponse(
+      accessToken: map['access_token'] as String,
+      accessTokenExpiresAt: DateTime.parse(map['expires_at'] as String),
+      accessTokenTtlMs: map['access_token_ttl_in_ms'] as int,
+      refreshToken: map['refresh_token'] as String,
+      staticToken: map['static_token'] as String?,
+    );
+  }
 }
