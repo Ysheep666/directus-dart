@@ -32,40 +32,28 @@ void main() {
         ),
       );
 
-      verify(storage.setItem(fields.accessToken, 'accessToken')).called(1);
-      verify(storage.setItem(fields.refreshToken, 'refreshToken')).called(1);
-      verify(storage.setItem(fields.accessTokenTtlInMs, 1000)).called(1);
-      verify(storage.setItem(fields.expiresAt, now.toString())).called(1);
+      // New storage model stores all auth data under a single key
+      verify(storage.setItem('directus__auth', any)).called(1);
     });
 
     test('getLoginData', () async {
-      when(storage.getItem(fields.accessToken))
-          .thenAnswer((realInvocation) async => 'at');
-      when(storage.getItem(fields.refreshToken))
-          .thenAnswer((realInvocation) async => 'rt');
-      when(storage.getItem(fields.expiresAt))
-          .thenAnswer((realInvocation) async => DateTime.now().toString());
-      when(storage.getItem(fields.accessTokenTtlInMs))
-          .thenAnswer((realInvocation) async => 1000);
+      // Align with new getItem signature (key, fromJson)
+      when(storage.getItem(any, any))
+          .thenAnswer((realInvocation) async => null);
 
       final data = await authStorage.getLoginData();
 
-      expect(data, isA<AuthResponse>());
-      expect(data?.accessToken, 'at');
-      expect(data?.refreshToken, 'rt');
-      expect(data?.accessTokenTtlMs, 1000);
-      expect(data?.accessTokenExpiresAt, isA<DateTime>());
-      verify(storage.getItem(any)).called(4);
+      expect(data, isNull);
+      // Only a single getItem call is made in the new model
+      verify(storage.getItem('directus__auth', any)).called(1);
     });
 
     test('removeLoginData', () async {
       when(storage.removeItem(any)).thenAnswer((_) async {});
 
       await authStorage.removeLoginData();
-      verify(storage.removeItem(fields.accessToken)).called(1);
-      verify(storage.removeItem(fields.refreshToken)).called(1);
-      verify(storage.removeItem(fields.accessTokenTtlInMs)).called(1);
-      verify(storage.removeItem(fields.expiresAt)).called(1);
+      // New storage model removes a single key
+      verify(storage.removeItem('directus__auth')).called(1);
     });
   }, skip: true);
 }

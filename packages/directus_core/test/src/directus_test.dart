@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:directus_core/directus_core.dart';
 import 'package:directus_core/src/modules/handlers.dart';
+import 'package:directus_core/src/modules/auth/_auth_response.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -16,8 +17,11 @@ void main() {
       client = MockDio();
       storage = MockDirectusStorage();
       when(client.interceptors).thenReturn(Interceptors());
-      when(client.options).thenReturn(BaseOptions());
-      when(storage.getItem(any)).thenAnswer((realInvocation) async => null);
+      when(client.options).thenReturn(BaseOptions(headers: {}));
+      // AuthHandler.init 会从 storage 读取登录信息，未 stub 会抛出 MissingStubError
+      when(storage.getItem<AuthResponse>(any, any))
+          .thenAnswer((_) async => null);
+
       sdk = DirectusCore('url', client: client, storage: storage);
       await sdk.init();
     });
@@ -34,7 +38,9 @@ void main() {
     test('that sdk will use provided client.', () {
       final newClient = MockDio();
       when(newClient.interceptors).thenReturn(Interceptors());
-      when(newClient.options).thenReturn(BaseOptions());
+      when(newClient.options).thenReturn(BaseOptions(headers: {}));
+      when(storage.getItem<AuthResponse>(any, any))
+          .thenAnswer((_) async => null);
       sdk = DirectusCore('url', storage: storage, client: newClient);
       expect(sdk.client, newClient);
     });

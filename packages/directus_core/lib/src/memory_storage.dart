@@ -6,15 +6,17 @@ class MemoryStorage extends DirectusStorage {
 
   /// Get item from storage
   @override
-  Future<Object?> getItem(String key) async {
-    return _store[key];
+  Future<T?> getItem<T>(String key, T Function(Map<String, dynamic>) fromJson) async {
+    final value = _store[key];
+    if (value == null) return null;
+    return fromJson(value as Map<String, dynamic>);
   }
 
   /// Set item to storage
   ///
   @override
-  Future<void> setItem(String key, Object value) async {
-    _store[key] = value;
+  Future<void> setItem<T>(String key, T value) async {
+    _store[key] = value as Object;
   }
 
   /// Remove item from storage
