@@ -10,7 +10,7 @@ import 'package:directus_core/src/modules/auth/_static_token.dart';
 import 'package:directus_core/src/modules/auth/_tfa.dart';
 import 'package:meta/meta.dart';
 
-import '_auth_response.dart';
+import 'auth_response.dart';
 
 class AuthHandler with StaticToken {
   /// Http client
@@ -53,9 +53,9 @@ class AuthHandler with StaticToken {
     required DirectusStorage storage,
     required Dio refreshClient,
     String? key,
-  }) : storage = AuthStorage(storage, key: key),
-       forgottenPassword = ForgottenPassword(client: client),
-       _refreshClient = refreshClient {
+  })  : storage = AuthStorage(storage, key: key),
+        forgottenPassword = ForgottenPassword(client: client),
+        _refreshClient = refreshClient {
     // Refresh url is same as normal url.
     _refreshClient.options.baseUrl = client.options.baseUrl;
     // Get new access token if current is expired.
@@ -92,19 +92,20 @@ class AuthHandler with StaticToken {
   /// Check if user is logged in.
   bool get isLoggedIn => _tokens != null;
 
+  /// 更新 tokens 并存储登录状态
+  Future<void> updateTokens(AuthResponse data) async {
+    await storage.storeLoginData(data);
+    tokens = data;
+  }
+
   /// Try to login user.
-  Future<void> loginByCustom(Response response) async {
+  Future<void> loginByAuth(AuthResponse data) async {
     await removeAuthState();
-
     try {
-      final loginDataResponse = AuthResponse.fromResponse(response);
-      await storage.storeLoginData(loginDataResponse);
-
-      tokens = loginDataResponse;
+      await updateTokens(data);
       currentUser = CurrentUser(client: client);
       tfa = Tfa(client: client);
-
-      await _emitter.emitAsync('login', loginDataResponse);
+      await _emitter.emitAsync('login', data);
     } catch (e) {
       throw DirectusError.fromDio(e);
     }
