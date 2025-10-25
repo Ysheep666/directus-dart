@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:directus_core/src/data_classes/directus_error.dart';
-import 'package:directus_core/src/modules/auth/_auth_response.dart';
+import 'package:directus_core/src/modules/auth/auth_response.dart';
 import 'package:directus_core/src/modules/auth/_auth_storage.dart';
 import 'package:directus_core/src/modules/auth/_current_user.dart';
 import 'package:directus_core/src/modules/auth/_tfa.dart';
@@ -78,7 +78,8 @@ void main() {
     });
 
     test('init', () async {
-      when(storage.getItem(any, any)).thenAnswer((realInvocation) async => null);
+      when(storage.getItem(any, any))
+          .thenAnswer((realInvocation) async => null);
       final auth = AuthHandler(
           client: client, storage: storage, refreshClient: refreshClient);
       await auth.init();

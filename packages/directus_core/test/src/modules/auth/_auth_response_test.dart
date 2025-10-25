@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:directus_core/src/modules/auth/_auth_response.dart';
+import 'package:directus_core/src/modules/auth/auth_response.dart';
 import 'package:test/test.dart';
 
 void main() {

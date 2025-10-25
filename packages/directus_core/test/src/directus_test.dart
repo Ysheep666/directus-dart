@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:directus_core/directus_core.dart';
 import 'package:directus_core/src/modules/handlers.dart';
-import 'package:directus_core/src/modules/auth/_auth_response.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 

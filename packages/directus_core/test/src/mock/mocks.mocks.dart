@@ -9,7 +9,7 @@ import 'package:dio/dio.dart' as _i2;
 import 'package:dio/src/dio_mixin.dart' as _i6;
 import 'package:directus_core/src/data_classes/data_classes.dart' as _i4;
 import 'package:directus_core/src/modules/auth/_auth_fields.dart' as _i5;
-import 'package:directus_core/src/modules/auth/_auth_response.dart' as _i11;
+import 'package:directus_core/src/modules/auth/auth_response.dart' as _i11;
 import 'package:directus_core/src/modules/auth/_auth_storage.dart' as _i10;
 import 'package:directus_core/src/modules/items/items_converter.dart' as _i3;
 import 'package:directus_core/src/modules/items/items_handler.dart' as _i7;

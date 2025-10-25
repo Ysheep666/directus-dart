@@ -1,4 +1,4 @@
-import 'package:directus_core/src/modules/auth/_auth_response.dart';
+import 'package:directus_core/src/modules/auth/auth_response.dart';
 
 AuthResponse mockAuthResponse() {
   return AuthResponse(

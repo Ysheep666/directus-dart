@@ -1,5 +1,5 @@
 import 'package:directus_core/src/modules/auth/_auth_fields.dart';
-import 'package:directus_core/src/modules/auth/_auth_response.dart';
+import 'package:directus_core/src/modules/auth/auth_response.dart';
 import 'package:directus_core/src/modules/auth/_auth_storage.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';

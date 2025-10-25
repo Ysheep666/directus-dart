@@ -1,7 +1,7 @@
 import 'package:directus_core/src/data_classes/directus_storage.dart';
 
 import '_auth_fields.dart';
-import '_auth_response.dart';
+import 'auth_response.dart';
 
 class AuthStorage {
   final DirectusStorage storage;
